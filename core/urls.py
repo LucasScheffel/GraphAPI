@@ -9,6 +9,7 @@ from rest_framework import routers
 # Views and ViewSets
 from node.api.viewsets import NodeViewSet
 from graph.api.viewsets import GraphNodeRelationViewSet, GraphViewSet
+from graph.views import *
 
 router = routers.DefaultRouter()
 router.register(r'node', NodeViewSet, basename="Node")
@@ -18,4 +19,6 @@ router.register(r'graph-node-relation', GraphNodeRelationViewSet, basename="Grap
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
+    path('routes/<int:graph_id>/from/<str:town1>/to/<str:town2>', graph_routes),
+    path('distance/<int:graph_id>/from/<str:town1>/to/<str:town2>', graph_min_distance)
 ]
