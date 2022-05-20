@@ -8,10 +8,11 @@ from django.urls import path, include
 from rest_framework import routers
 # Views and ViewSets
 from node.api.viewsets import NodeViewSet
-from graph.api.viewsets import GraphNodeRelationViewSet
+from graph.api.viewsets import GraphNodeRelationViewSet, GraphViewSet
 
 router = routers.DefaultRouter()
 router.register(r'node', NodeViewSet, basename="Node")
+router.register(r'graph', GraphViewSet, basename="Graph")
 router.register(r'graph-node-relation', GraphNodeRelationViewSet, basename="Graph-Node-Relation")
 
 urlpatterns = [
