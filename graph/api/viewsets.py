@@ -1,6 +1,7 @@
 # REST Framework
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework import status
 # Others
 from node.models import Node
@@ -48,7 +49,7 @@ class GraphViewSet(ModelViewSet):
     def retrieve(self, request, pk:int):
 
         if(Graph.objects.filter(id=pk).first()):
-            graph_nodes = GraphNodeRelationSerializer(GraphNodeRelation.objects.filter(graph_id=pk).all(), many=True).data
+            graph_nodes = GraphNodeRelationSerializer(self.get_object().graphs.all(), many=True).data
             return Response({'id': pk, 'data': graph_nodes}, status=status.HTTP_200_OK, headers={})
         else:
             return Response({}, status=status.HTTP_404_NOT_FOUND, headers={})
