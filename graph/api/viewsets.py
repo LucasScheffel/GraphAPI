@@ -49,7 +49,7 @@ class GraphViewSet(ModelViewSet):
     def retrieve(self, request, pk:int):
 
         if(Graph.objects.filter(id=pk).first()):
-            graph_nodes = GraphNodeRelationSerializer(self.get_object().graphs.all(), many=True).data
+            graph_nodes = NodeSerializer(Node.objects.filter(id__in=self.get_object().graphs.all().only("id")), many=True).data
             return Response({'id': pk, 'data': graph_nodes}, status=status.HTTP_200_OK, headers={})
         else:
             return Response({}, status=status.HTTP_404_NOT_FOUND, headers={})
