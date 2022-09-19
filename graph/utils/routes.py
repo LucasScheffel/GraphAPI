@@ -1,8 +1,6 @@
 
 from node.models import Node
 from node.api.serializers import NodeSerializer
-from graph.models import GraphNodeRelation
-from graph.api.serializers import GraphNodeRelationSerializer
 
 def get_routes_from_graph(graph_id: int, origin: str, destination: str, max_stops=None) -> list:
     """
@@ -23,25 +21,19 @@ def get_routes_from_graph(graph_id: int, origin: str, destination: str, max_stop
     nodes = list()
     source_targets_dict = dict()
 
-    graph_node_relations = GraphNodeRelationSerializer(GraphNodeRelation.objects.filter(graph_id=graph_id).all(), many=True).data
-
-    for relation in graph_node_relations:
-        nodes.append(NodeSerializer(Node.objects.get(id=relation['node_id'])).data)
-
-    if not nodes:
-        return list()
+    nodes = NodeSerializer(Node.objects.filter(graph_id=graph_id), many=True).data
         
     current_sources = [origin]
     while nodes:
 
-        aux = [node for node in nodes if node['source'] in current_sources]
+        frontier = [node for node in nodes if node['source'] in current_sources]
 
         for source in current_sources:
             source_targets_dict.setdefault(source, [])
 
         current_sources = []
 
-        for node in aux:
+        for node in frontier:
             current_sources.append(nodes.pop(nodes.index(node))['target'])
             source_targets_dict[node['source']].append(node['target'])
 

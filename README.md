@@ -1,13 +1,3 @@
-
-# Desafio Dev Jr/Pl
-Bem vindo(a)! Esse desafio tem como objetivo avaliar a capacidade do candidato de construir uma API seguindo as melhores práticas e padrões de desenvolvimento. 
-
-## O Desafio
-A API pode ser escrita em qualquer linguagem/framework e precisa ser conteinerizada. **Será avaliada a capacidade do candidato para escrever uma aplicação legível, testável e escalável.**
-
-## Cenário
-Uma empresa de transporte de carga e pessoal faz algumas rotas de entrega em um grupo de cidades locais. Dada uma simplificação do modelo, todas as rotas entre essas cidades são unidirecionais. Essa empresa deseja portanto conhecer as melhores rotas entre algumas cidades e suas devidas distâncias com o intuito de definir a melhor logística de trabalho. Para isso você foi contratado com o intuito de prover endpoints REST de algumas funcionalidades comuns.
-
 ## Entregáveis
 - API.
 - Dockerfile da API.
