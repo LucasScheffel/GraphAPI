@@ -12,5 +12,6 @@ class Node(models.Model):
     class Meta:
         verbose_name = "Node"
         verbose_name_plural = "Nodes"
+        db_table = "node"
         unique_together = [["graph_id", "source", "target"]]
         ordering = ['graph_id', 'source']
