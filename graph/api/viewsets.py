@@ -31,7 +31,10 @@ class GraphViewSet(ModelViewSet):
             description=request.query_params.get('description', None),
         )
 
-        return Response(self.serializer_class(result, many=True).data)
+        self.pagination_class.page_size = 20
+        page = self.paginate_queryset(result)
+        serializer = self.serializer_class(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
 
     @transaction.atomic
