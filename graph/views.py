@@ -29,7 +29,7 @@ def graph_routes(request, graph_id: int, town1: str, town2: str):
     """
 
     if not Graph.objects.filter(id=graph_id).first():
-        return Response({}, status=status.HTTP_404_NOT_FOUND, headers={})
+        return Response({}, status=status.HTTP_404_NOT_FOUND)
 
     # query param
     max_stops = request.query_params.get('maxStops', None)
@@ -37,35 +37,22 @@ def graph_routes(request, graph_id: int, town1: str, town2: str):
     paths = get_routes_from_graph(graph_id, town1.upper(), town2.upper(), max_stops)
     
     routes = [{"route": path, "stops": len(path) - 1} for path in paths]
-    return Response({"routes": routes}, status=status.HTTP_200_OK, headers={})
+    return Response({"routes": routes}, status=status.HTTP_200_OK)
 
 
 @api_view(('POST',))
 @renderer_classes((JSONRenderer,))
 def graph_min_distance(request, graph_id: int, town1: str, town2: str):
-    """
-    It takes a graph_id, town1 and town2 as parameters, and returns the minimal distance between town1
-    and town2, and the path that leads to that minimal distance
-    
-    :param request: The request object
-    :param graph_id: int
-    :type graph_id: int
-    :param town1: str, town2: str
-    :type town1: str
-    :param town2: str, town1: str, graph_id: int
-    :type town2: str
-    :return: The minimal distance between town1 and town2
-    """
 
     if not Graph.objects.filter(id=graph_id).first():
-        return Response({}, status=status.HTTP_404_NOT_FOUND, headers={})
+        return Response({}, status=status.HTTP_404_NOT_FOUND)
     if town1 == town2:
-        return Response({"distance": 0, "path":[town1]}, status=status.HTTP_200_OK, headers={})
+        return Response({"distance": 0, "path":[town1]}, status=status.HTTP_200_OK)
 
     paths = get_routes_from_graph(graph_id, town1.upper(), town2.upper())
 
     if not paths:
-        return Response({"distance": -1, "path": []}, status=status.HTTP_200_OK, headers={})
+        return Response({"distance": -1, "path": []}, status=status.HTTP_200_OK)
 
     distances = dict().fromkeys(paths, 0)
     for path in distances.keys():

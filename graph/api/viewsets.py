@@ -6,7 +6,6 @@ from rest_framework import status
 from django.db import transaction
 # Others
 from core.utils.errors import API_Error
-from node.models import Node
 from node.api.serializers import NodeSerializer
 from graph.models import Graph
 from graph.api.serializers import GraphSerializer
@@ -60,3 +59,13 @@ class GraphViewSet(ModelViewSet):
                 return Response(response_data, status=status.HTTP_201_CREATED, headers={})
         except Exception as e:
             return Response({'errors': API_Error(e)}, status=status.HTTP_400_BAD_REQUEST, headers={})
+
+    
+    def update(self, request, pk=None):
+        graph = Graph.objects.filter(id=pk).first()
+
+        if not graph:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+        updated_graph = GraphSerializer(graph.update(request.data)).data
+        return Response(updated_graph, status=status.HTTP_200_OK)
