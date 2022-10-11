@@ -16,7 +16,9 @@ class Graph(models.Model):
 
     # Methods
     def update(self, data):
+        # Assign fields
         self.description = data.get('description', self.description)
-        
+
+        # Save and Return
         self.save()
         return self

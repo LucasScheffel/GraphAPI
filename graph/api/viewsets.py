@@ -19,7 +19,7 @@ class GraphViewSet(ModelViewSet):
         query = Graph.objects
 
         if description:
-            query = query.filter(description__startswith=description)
+            query = query.filter(description__icontains=description)
 
         return query.all()
 
@@ -30,7 +30,7 @@ class GraphViewSet(ModelViewSet):
             description=request.query_params.get('description', None),
         )
 
-        self.pagination_class.page_size = 20
+        self.pagination_class.page_size = request.query_params.get('pageSize', 20)
         page = self.paginate_queryset(result)
         serializer = self.serializer_class(page, many=True)
         return self.get_paginated_response(serializer.data)
