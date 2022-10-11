@@ -1,5 +1,5 @@
 def API_Error(e: Exception) -> list:
-    """ Formats the exception into an array of strings describing the error """
+    """ Formats the exception into an array of strings describing the error(s) """
     try:
         return [dict(e.detail).get(key)[0] for key in dict(e.detail).keys()]
     except Exception:

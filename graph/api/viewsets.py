@@ -53,13 +53,11 @@ class GraphViewSet(ModelViewSet):
                     node_serializer.is_valid(raise_exception=True)
                     node_serializer.save()
 
-                response_data = dict(serializer.data)
-                response_data.setdefault("data", graph_nodes)
-
-                return Response(response_data, status=status.HTTP_201_CREATED, headers={})
         except Exception as e:
             return Response({'errors': API_Error(e)}, status=status.HTTP_400_BAD_REQUEST, headers={})
 
+        graph = Graph.objects.filter(id=serializer.data.get('id')).first()
+        return Response(GraphSerializer(graph).data, status=status.HTTP_201_CREATED, headers={})
     
     def update(self, request, pk=None):
         graph = Graph.objects.filter(id=pk).first()
@@ -69,3 +67,13 @@ class GraphViewSet(ModelViewSet):
 
         updated_graph = GraphSerializer(graph.update(request.data)).data
         return Response(updated_graph, status=status.HTTP_200_OK)
+
+
+    def destroy(self, request, pk=None):
+        graph = Graph.objects.filter(id=pk).first()
+
+        if not graph:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+        graph.delete()
+        return Response({}, status=status.HTTP_200_OK)
