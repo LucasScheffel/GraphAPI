@@ -1,15 +1,27 @@
-## Entregáveis
-- API.
-- Dockerfile da API.
-- Docker-compose com todos os serviços necessários.
-- Testes.
-- Documentação.
+## Author: Lucas Scheffel
 
-## API
-A entrada será dada como um grafo direcionado onde um nó representa uma cidade e uma aresta representa uma rota entre duas cidades. O peso da aresta representa então a distância dessa rota. Uma dada rota jamais aparecerá mais de uma vez, e para uma dada rota, as cidades de origem e destino sempre serão diferentes.
-Uma rota direcionada será dada como um objeto JSON, onde as cidades serão nomeadas usando letras do alfabeto [A-Z].
-Exemplo: uma rota de A para B com distância 5 é representada como:
+## API Overview
+This REST API works with graphs and its edges in JSON data format, providing basic CRUD functionalities and other features such as:
+  - Get all the routes from a source to a target considering the sent parameters
+  - Get the minimum distance between two points in the graph
 
+## Content
+  - API (In Progress).
+  - API Dockerfile (Done).
+  - Docker-compose with all the necessary services (Done).
+  - Automated tests (TODO).
+
+## Functional specifications
+### Create Graph
+* Endpoint: `http://localhost:8000/graph`
+* HTTP Method: POST
+* HTTP Success Response Code: CREATED (201)
+
+This endpoint receives the following data (fields) of a graph and saves it to an SQLite database:
+  - Description of the graph
+  - The graphs' edges
+
+# Edge JSON representation:
 ```javascript
 {​
   "source": "A",
@@ -17,18 +29,12 @@ Exemplo: uma rota de A para B com distância 5 é representada como:
   "distance": 5
 }​
 ```
-## Especificação Funcional
-### Salvar Grafo
 
-Esse endpoint recebe as arestas de um grafo e salva em um banco de dados para consultas posteriores.
-* Endpoint: `http://localhost:8080/graph`
-* HTTP Method: POST
-* HTTP Success Response Code: CREATED (201)
-* Contract:
-  * Request payload
-
+# Endpoint Contract:
+  * Request payload:
 ```javascript
 {
+  "description": "Example",
   "data": [
     {
       "source": "A", 
@@ -88,10 +94,12 @@ Esse endpoint recebe as arestas de um grafo e salva em um banco de dados para co
   ]
 }​
 ```
-  * Response payload
+
+  * Response payload:
 ```javascript
 {​
   "id" : 1,
+  "description": "Example",
   "data":[
     {​
       "source": "A", "target": "B", "distance":6
@@ -129,19 +137,21 @@ Esse endpoint recebe as arestas de um grafo e salva em um banco de dados para co
   ]
 }​
 ```
-### Recuperar Grafo
-Esse endpoint retorna um grafo previamente salvo no banco de dados. Se o grafo não existe, retorna HTTP NOT FOUND.
-* Endpoint: `http://localhost:8080/graph/<graphId>`
+
+### Retrieve Graph
+* Endpoint: `http://localhost:8000/graph/<graphId>`
 * HTTP Method: GET
 * HTTP Success Response Code: OK (200)
 * HTTP Error Response Code: NOT FOUND (404)
-* Contract:
-  * Request payload: none
-  * Response payload
 
+This endpoint returns a graph previously created in the database. If the graph doesn't exist, returns a HTTP NOT FOUND status.
+
+# Contract:
+  * Response payload:
 ```javascript
 {​
   "id" : 1,
+  "description": "Example",
   "data":[
     {​
       "source": "A", "target": "B", "distance": 6
@@ -179,50 +189,149 @@ Esse endpoint retorna um grafo previamente salvo no banco de dados. Se o grafo n
   ]
 }​
 ```
-### Encontrar todas rotas disponíveis dada uma cidade de origem e outra de destino em um grafo salvo anteriormente
-Utilizando um grafo salvo anteriormente, esse endpoint calcula todas as rotas disponíveis de uma cidade origem para outra de destino, dado um número máximo de paradas. Se não existirem rotas possíveis, o resultado é uma lista vazia. Se o parâmetro "maxStops" não for definido, todas as rotas possíveis serão listadas. Se o grafo não existir, retorna HTTP NOT FOUND.
-Exemplo: No grafo (AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7), as possíveis rotas de A para C com máximo de 3 paradas seriam: ["ABC", "ADC", "AEBC"]
+
+### List Graphs
+* Endpoint: `http://localhost:8000/graph/`
+* HTTP Method: GET
+* HTTP Success Response Code: OK (200)
+* HTTP Error Response Code: NOT FOUND (404)
+
+This endpoint returns all the graphs in the database considering the given parameters which include:
+  - pageSize: The number of graphs per page
+  - page: The number of the desired page
+  - description: A string contained in the description field of the graph
+
+# Contract:
+  * Response payload:
+```javascript
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {​
+      "id" : 1,
+      "description": "Example",
+      "data": [
+        {​
+          "source": "A", "target": "B", "distance": 6
+        }​,
+        {​
+          "source": "A", "target": "E", "distance": 4
+        }​,
+        {​
+          "source": "B", "target": "A", "distance": 6
+        }​,
+        {​
+          "source": "B", "target": "C", "distance": 2
+        }​,
+        {​
+          "source": "B", "target": "D", "distance": 4
+        }​,
+        {​
+          "source": "C", "target": "B", "distance": 3
+        }​,
+        {​
+          "source": "C", "target": "D", "distance": 1
+        }​,
+        {​
+          "source": "C", "target": "E", "distance": 7
+        }​,
+        {​
+          "source": "D", "target": "B", "distance": 8
+        }​,
+        {​
+          "source": "E", "target": "B", "distance": 5
+        }​,
+        {​
+          "source": "E", "target": "D", "distance": 7
+        }​
+      ]
+    }
+  ]
+}
+```
+
+### Update Graph
+* Endpoint: `http://localhost:8000/graph/<graphId>`
+* HTTP Method: PUT
+* HTTP Success Response Code: OK (200)
+* HTTP Error Response Code: NOT FOUND (404)
+
+# Contract:
+  * Request payload:
+```javascript 
+{
+  "description": "Updated Description"
+}
+```
+
+  * Response payload:
+```javascript
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {​
+      "id" : 1,
+      "description": "Updated Description",
+      "data": [
+        {​
+          "source": "A", "target": "B", "distance": 6
+        }​,
+        {​
+          "source": "A", "target": "E", "distance": 4
+        }​,
+        {​
+          "source": "B", "target": "A", "distance": 6
+        }​,
+        {​
+          "source": "B", "target": "C", "distance": 2
+        }​,
+        {​
+          "source": "B", "target": "D", "distance": 4
+        }​,
+        {​
+          "source": "C", "target": "B", "distance": 3
+        }​,
+        {​
+          "source": "C", "target": "D", "distance": 1
+        }​,
+        {​
+          "source": "C", "target": "E", "distance": 7
+        }​,
+        {​
+          "source": "D", "target": "B", "distance": 8
+        }​,
+        {​
+          "source": "E", "target": "B", "distance": 5
+        }​,
+        {​
+          "source": "E", "target": "D", "distance": 7
+        }​
+      ]
+    }
+  ]
+}
+```
+
+### Remove Graph
+* Endpoint: `http://localhost:8000/graph/<graphId>`
+* HTTP Method: DELETE
+* HTTP Success Response Code: OK (200)
+* HTTP Error Response Code: NOT FOUND (404)
+
+### Find all routes from a source city to a target city in a previously created graph
+This endpoint finds all the possible routes from one city to another, considering a given number of maximum stops. If there are no possible routes, it returns an empty list. If the "maxStops" parameter is not sent, all the possible routes will be returned. If the graph doesn't exist, returns HTTP NOT FOUND.
+Example: Considering graph (AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7), the possible routes from "A" to "C" with "maxStops" = 3 would be: ["ABC", "ADC", "AEBC"]
+
 * Endpoint: `http://localhost:8080/routes/<graphId>/from/<town1>/to/<town2>?maxStops=<maxStops>`
-* HTTP Method: POST
+* HTTP Method: GET
 * HTTP Success Response Code: OK (200)
 * HTTP Error Response Code: NOT FOUND (404)
 * Contract:
-  * Grafo salvo anteriormente
-```javascript
-{​
-  "data":[
-    {​
-      "source": "A", "target": "B", "distance": 5
-    }​,
-    {​
-      "source": "B", "target": "C", "distance": 4
-    }​,
-    {​
-      "source": "C", "target": "D", "distance": 8
-    }​,
-    {​
-      "source": "D", "target": "C", "distance": 8
-    }​,
-    {​
-      "source": "D", "target": "E", "distance": 6
-    }​,
-    {​
-      "source": "A", "target": "D", "distance": 5
-    }​,
-    {​
-      "source": "C", "target": "E", "distance": 2
-    }​,
-    {​
-      "source": "E", "target": "B", "distance": 3
-    }​,
-    {​
-      "source": "A", "target": "E", "distance": 7
-    }​
-  ]
-}​
-```
-  * Request payload: none
-  * Response payload
+  * Response payload:
 ```javascript
 {​
   "routes": [
@@ -241,59 +350,21 @@ Exemplo: No grafo (AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7), as possíveis r
   ]
 }​
 ```
-### Determinar a distância mínima entre duas cidades em um grafo salvo
 
-Utilizando um grafo salvo anteriormente, esse endpoint determina a rota cuja distância seja a mínima possível entre duas cidades. Se as cidades de origem e destino forem iguais, o será zero. Se não exitir rota possível entre as duas cidades, então o resultado é -1. Se o grafo não existir, retorna HTTP NOT FOUND.
+### Find the minimal distance between two cities in the graph
+This endpoint calculates the shortest possible route between two cities. If both the source and target are equal, the result is going to be 0. If there are no routes connecting the two cities, then the result will be -1. If the graph doesn't exist, returns HTTP NOT FOUND.
+
 * Endpoint: `http://localhost:8080/distance/<graphId>/from/<town1>/to/<town2>`
-* HTTP Method: POST
+* HTTP Method: GET
 * HTTP Success Response Code: OK (200)
 * HTTP Error Response Code: NOT FOUND (404)
 * Contract:
-  * Grafo salvo anteriormente
-```javascript
-{​
-  "data":[
-    {​
-      "source": "A", "target": "B", "distance":6
-    }​,
-    {​
-      "source": "A", "target": "E", "distance":4
-    }​,
-    {​
-      "source": "B", "target": "A", "distance":6
-    }​,
-    {​
-      "source": "B", "target": "C", "distance":2
-    }​,
-    {​
-      "source": "B", "target": "D", "distance":4
-    }​,
-    {​
-      "source": "C", "target": "B", "distance":3
-    }​,
-    {​
-      "source": "C", "target": "D", "distance":1
-    }​,
-    {​
-      "source": "C", "target": "E", "distance":7
-    }​,
-    {​
-      "source": "D", "target": "B", "distance":8
-    }​,
-    {​
-      "source": "E",  "target": "B", "distance":5
-    }​,
-    {​
-      "source": "E", "target": "D", "distance":7
-    }​
-  ]
-}​
-```
-  * Request payload: none
-  * Response payload
+  * Response payload:
 ```javascript
 {​
   "distance" : 8,
   "path" : ["A", "B", "C"]
 }​
 ```
+
+## Author: Lucas Scheffel
