@@ -11,7 +11,7 @@ from node.api.serializers import NodeSerializer
 from graph.utils.routes import get_routes_from_graph
 
 
-@api_view(('POST',))
+@api_view(('GET',))
 @renderer_classes((JSONRenderer,))
 def graph_routes(request, graph_id: int, town1: str, town2: str):
     """
@@ -40,7 +40,7 @@ def graph_routes(request, graph_id: int, town1: str, town2: str):
     return Response({"routes": routes}, status=status.HTTP_200_OK)
 
 
-@api_view(('POST',))
+@api_view(('GET',))
 @renderer_classes((JSONRenderer,))
 def graph_min_distance(request, graph_id: int, town1: str, town2: str):
 
