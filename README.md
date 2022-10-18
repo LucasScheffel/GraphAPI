@@ -2,7 +2,7 @@
 
 ## API Overview
 This REST API works with graphs and its edges in JSON data format, providing basic CRUD functionalities and other features such as:
-  - Get all the routes from a source to a target considering the sent parameters
+  - Get all the routes from a source to a target, considering the sent parameters, through the use of a search method (BFS)
   - Get the minimum distance between two points in the graph
 
 ## Content
