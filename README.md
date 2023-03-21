@@ -9,7 +9,7 @@ This REST API works with graphs and its edges in JSON data format, providing bas
   - API (In Progress).
   - API Dockerfile (Done).
   - Docker-compose with all the necessary services (Done).
-  - Automated tests (TODO).
+  - Automated tests (In Progress).
 
 ## Functional specifications
 ### Create Graph
