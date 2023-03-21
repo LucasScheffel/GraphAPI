@@ -2,7 +2,7 @@
 from node.models import Node
 from node.api.serializers import NodeSerializer
 
-def get_routes_from_graph(graph_id: int, origin: str, destination: str, max_stops=None) -> list:
+def get_routes(graph_id: int, origin: str, destination: str, max_stops=None) -> list:
     """
     It takes a graph_id, an origin and a destination and returns a list of all possible routes from
     origin to destination

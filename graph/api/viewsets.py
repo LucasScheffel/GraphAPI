@@ -58,7 +58,8 @@ class GraphViewSet(ModelViewSet):
 
         graph = Graph.objects.filter(id=serializer.data.get('id')).first()
         return Response(GraphSerializer(graph).data, status=status.HTTP_201_CREATED, headers={})
-    
+
+
     def update(self, request, pk=None):
         graph = Graph.objects.filter(id=pk).first()
 

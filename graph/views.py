@@ -8,7 +8,7 @@ from node.models import Node
 from graph.models import Graph
 from node.api.serializers import NodeSerializer
 # Functions
-from graph.utils.routes import get_routes_from_graph
+from graph.utils.routes import get_routes
 
 
 @api_view(('GET',))
@@ -34,7 +34,7 @@ def graph_routes(request, graph_id: int, town1: str, town2: str):
     # query param
     max_stops = request.query_params.get('maxStops', None)
 
-    paths = get_routes_from_graph(graph_id, town1.upper(), town2.upper(), max_stops)
+    paths = get_routes(graph_id, town1.upper(), town2.upper(), max_stops)
     
     routes = [{"route": path, "stops": len(path) - 1} for path in paths]
     return Response({"routes": routes}, status=status.HTTP_200_OK)
@@ -49,7 +49,7 @@ def graph_min_distance(request, graph_id: int, town1: str, town2: str):
     if town1 == town2:
         return Response({"distance": 0, "path":[town1]}, status=status.HTTP_200_OK)
 
-    paths = get_routes_from_graph(graph_id, town1.upper(), town2.upper())
+    paths = get_routes(graph_id, town1.upper(), town2.upper())
 
     if not paths:
         return Response({"distance": -1, "path": []}, status=status.HTTP_200_OK)
